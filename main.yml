@@ -1,0 +1,52 @@
+---
+- name: iscsi_target
+  hosts: iscsi_server
+  become: true
+  tags:
+    - all
+
+  roles:
+    - iscsi_target
+
+- name: cluster prepare
+  hosts: pcs_servers
+  become: true
+  tags:
+    - all
+
+  roles:
+    - base_config
+    - pcs_install
+    - fence_agents
+  
+- name: cluster config
+  hosts: pcs1
+  become: true
+  tags:
+    - all
+
+  roles:
+    - pcs_config
+
+- name: cluster prepare
+  hosts: pcs_servers
+  become: true
+  tags:
+    - all
+
+  roles:
+    - iscsi_initiator
+    - multipath
+    - gfs2
+
+- name: gfs2 config
+  hosts: pcs1
+  become: true
+  tags:
+    - all
+
+  roles:
+    - config_gfs2
+
+
+...
